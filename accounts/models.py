@@ -23,7 +23,8 @@ class UserManager(BaseUserManager):
         user = self.create_user(
             email=email,
             username=username,
-            password=password,  # You can also use user.set_password(password) as done above
+            # You can also use user.set_password(password) as done above
+            password=password,
         )
         user.is_admin = True
         user.is_superuser = True
@@ -48,7 +49,8 @@ class User(AbstractBaseUser):
     is_developer = models.BooleanField(default=False)
     is_project_manager = models.BooleanField(default=False)
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now=True)
-    create_on = models.DateTimeField(verbose_name="Date Created", default=timezone.now)
+    create_on = models.DateTimeField(
+        verbose_name="Date Created", default=timezone.now)
 
     # So that we will be working primarily with email and not username
     USERNAME_FIELD = "email"
@@ -75,6 +77,7 @@ class User(AbstractBaseUser):
     # def natural_key(self):
     #     return self.username
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(blank=True, null=True)
@@ -82,16 +85,25 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
-    
-    
+
+
 class Invitation(models.Model):
-    inviter = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="inviter")
+    inviter = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="inviter")
     guest = models.EmailField()
     date_invited = models.DateTimeField(default=timezone.now)
     accepted = models.BooleanField(default=False)
     slug = models.SlugField(max_length=200)
-    
-    
+
     def __str__(self):
         return f'{self.inviter.username} invited this email address {self.guest}'
 
+
+class ConfirmationCode(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='confirmation_code')
+    code = models.CharField(max_length=200)
+    is_confirmed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.username} code'
