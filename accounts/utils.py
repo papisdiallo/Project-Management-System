@@ -1,8 +1,12 @@
 import random
+import threading
 import string
 from .models import Invitation
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
+from tracker.models import Site
+from django.template.loader import get_template
+
 
 colorPickerList = {
     "#2596be",
@@ -38,9 +42,26 @@ def generate_unique_slug(instance, new_slug=None):
     return slug
 
 
+class EmailThreading(threading.Thread):
+    def __init__(self, email):
+        self.email = email
+        threading.Thread.__init__(self)
+
+    def run(self):
+        self.email.send(fail_silently=False)
+
+
 def send_emailConfirmation_code(email_to, username, code):
-    # this content need to be an html content
+    # this content need to be an html
+    context_data = {'code': code}
+    message_template = get_template(
+        'accounts/emailMessageTemplate.html').render(context_data)
     content = f"Hi {username},\n Thank you for signing up on our site.\n Your verification code is: {code}"
     subject = "Email Verification"
     from_email = settings.EMAIL_HOST_USER
-    send_mail(subject, content, from_email, [email_to, ], fail_silently=False)
+    email = EmailMessage(
+        subject, message_template, from_email, [email_to, ]
+    )
+    # this is what allows you to send the email as html and not a plain text(this is super important)
+    email.content_subtype = 'html'
+    EmailThreading(email).start()

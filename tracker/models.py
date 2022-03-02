@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
 
-User = get_user_model()
 
 class Site(models.Model):
     site_name = models.CharField(
@@ -11,7 +11,8 @@ class Site(models.Model):
         User, related_name="site", on_delete=models.SET_NULL, blank=True, null=True
     )
     slug = models.SlugField(max_length=20, blank=True, null=True)
-    people = models.ManyToManyField(User, related_name="participants", blank=True)
+    people = models.ManyToManyField(
+        User, related_name="participants", blank=True)
 
     def __str__(self):
         return self.site_name

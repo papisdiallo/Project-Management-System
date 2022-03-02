@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% load static %}
 <html>
-    {% include 'tracking/head.html' %}
+    {% include 'tracker/partials/head.html' %}
     <body style="background: white;">
     <div class="container mt-3">
     <a href=""><i class="fa fa-arrow-left" aria-hidden="true"></i></a>
@@ -9,7 +9,7 @@
         <div class="row d-flex justify-content-center">
         <div class="col-md-4 ">
             <div>
-                <img class="img-fluid" src="{% static 'tracking/dist/img/site-creation1.png' %}" alt="first-site" />
+                <img class="img-fluid" src="{% static 'tracker/dist/img/site-creation1.png' %}" alt="first-site" />
             </div>
             <p class="text-muted mt-3">
                 Create your projects, Manage yours sagas and 
@@ -22,7 +22,7 @@
             <div class="">
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                             <span class="sr-only">Close</span>
@@ -46,6 +46,6 @@
         </div>
         </div>
     </div>
-        {% include 'tracking/scripts.html' %}
+        {% include 'tracker/partials/scripts.html' %}
     </body>
 </html>

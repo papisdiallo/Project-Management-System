@@ -1,4 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.views.generic import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from .models import Site
+from django.urls import reverse
+from .forms import CreateSiteForm
+from django.forms import modelformset_factory
+from django.contrib import messages
 
 
 @login_required
@@ -11,9 +19,9 @@ def create_site(request):
             form.save(commit=False)
             form.instance.admin = request.user
             form.save()
-            form.instance.people.add(request.user)
+            print("this is the new slug", form.instance.slug)
             return redirect(
-                reverse("projects", kwargs={"slug_site": form.instance.slug})
+                reverse("dashbaord", kwargs={"site_slug": form.instance.slug})
             )
         else:
             site = Site.objects.get(admin=request.user)
@@ -24,4 +32,15 @@ def create_site(request):
     context = {
         "form": form,
     }
-    return render(request, "tracker/create-site.html", context)
+    return render(request, "tracker/create_site.html", context)
+
+
+class DashbaordView(LoginRequiredMixin, View):
+    def get(self, request, site_slug, *args, **kwargs):
+        user = request.user
+        # need to get the site and check ifthe user is in the people of course
+        context = {}
+        return render(request, 'tracker/dashboard.html', context)
+
+    def post(self, request, site_slug, *args, **kwargs):
+        pass

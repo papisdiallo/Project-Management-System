@@ -1,4 +1,6 @@
 from django import forms
+from .models import Site
+
 
 class CreateSiteForm(forms.ModelForm):
     site_name = forms.CharField(

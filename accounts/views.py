@@ -3,9 +3,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
+from tracker.models import Site
 from .forms import UserRegistrationForm, LoginForm
 from .models import ConfirmationCode, Invitation
-from .utils import send_emailConfirmation_code
+from .utils import send_emailConfirmation_code, EmailThreading
+from django.template.loader import get_template
 import string
 import random
 
@@ -14,28 +16,46 @@ User = get_user_model()
 
 
 def Login(request):
+    site_slug = ""
+    if request.user.is_authenticated:
+        pass
+
     form = LoginForm(request.POST or None)
     if form.is_valid():
         username = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
         user = authenticate(username=username, password=password)
-        print('this is the user from the login page still', user)
-        print("this is the user's username from the login view", user.username)
         # check if the user has been sent a code then he is an admin
-        user_email_code = ConfirmationCode.objects.get(user=user).exists()
+        user_email_code = user.confirmation_code
         if user_email_code:
+            # this means that this user is an admin
             if user_email_code.is_confirmed:
-                return redirect("dashbaord")
+                login(request, user)  # login the user before redirecting
+                site_slug = user.profile.site.slug if user.profile.site else ""
+                if site_slug != "":
+                    if "next" in request.POST:
+                        return redirect(request.POST.get("next"))
+
+                    return redirect(
+                        reverse("dashbaord", kwargs={"site_slug": site_slug})
+                    )
+                return redirect('site_creation')
+
             request.session['user_to_verify_id'] = user.id
             return redirect("email_confirmation")
-
+        site_slug = user.profile.site.slug if user.profile.site else ""
+        # means the user has been invited to join the company or organization, or site whatever...
         if "next" in request.POST:
             return redirect(request.POST.get("next"))
-        return redirect('dashbaord')
+        return redirect(
+            reverse("dashbaord", kwargs={"site_slug": site_slug})
+        )
     return render(request, "accounts/login.html", {"form": form})
 
 
 def register(request):
+    if request.user.is_authenticated:
+        pass
     form = UserRegistrationForm(request.POST or None)
     invitation_slug = request.GET.get("invitation", None)
     if form.is_valid():
@@ -45,6 +65,7 @@ def register(request):
 
         instance = form.save(commit=False)
         instance.first_name = form.cleaned_data.get("first_name")
+        print("this is the first name", form.cleaned_data.get("first_name"))
         instance.last_name = form.cleaned_data.get("last_name")
         instance.save()
 
@@ -55,13 +76,23 @@ def register(request):
                 invitation = Invitation.objects.get(slug=invitation_slug)
                 invitation.is_confirmed = True
                 invitation.save()
+                site = invitation.inviter.site
+                instance.profile.site = site
+                instance.save()
                 login(request, user)
-                return redirect("dashboard")
+                # I neeed to loop ti see the site in which the user belongs
+                return redirect(
+                    reverse("dashbaord", kwargs={"site_slug": site.slug})
+                )
             except:  # return an error to the user
                 pass
 
         else:  # means we need to send an email confirmation
-            code = instance.confirmation_code.code
+            code = "".join(random.choice(
+                "".join(string.digits)) for _ in range(6))
+
+            ConfirmationCode.objects.create(
+                user=user, code=code)
             print("there is not invitation for this user")
             request.session['user_to_verify_id'] = user.id
             send_emailConfirmation_code(email, username, code)

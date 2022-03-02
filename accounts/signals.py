@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from .utils import generate_random_26_string, generate_unique_slug
 from django.dispatch import receiver
 import random
@@ -14,11 +14,6 @@ def create_profile(sender, instance, created, **kwargs):
             user=instance, profile_background=random.choice(
                 list(colorPickerList))
         )
-        confirmation_code = "".join(random.choice(
-            "".join(string.digits)) for _ in range(6))
-        print("this is thee confirmation code", confirmation_code)
-        ConfirmationCode.objects.create(
-            user=instance, code=confirmation_code)
 
 
 @receiver(post_save, sender=Invitation)

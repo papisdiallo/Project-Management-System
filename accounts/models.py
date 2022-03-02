@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
+from tracker.models import Site
 
 
 class UserManager(BaseUserManager):
@@ -51,7 +52,6 @@ class User(AbstractBaseUser):
     last_login = models.DateTimeField(verbose_name="Last Login", auto_now=True)
     create_on = models.DateTimeField(
         verbose_name="Date Created", default=timezone.now)
-
     # So that we will be working primarily with email and not username
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
@@ -79,9 +79,12 @@ class User(AbstractBaseUser):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="profile")
     profile_pic = models.ImageField(blank=True, null=True)
     profile_background = models.CharField(max_length=15, blank=True, null=True)
+    site = models.ForeignKey(
+        Site, on_delete=models.SET_NULL, null=True, related_name="members")
 
     def __str__(self):
         return f"{self.user.username}'s profile"
@@ -90,7 +93,7 @@ class Profile(models.Model):
 class Invitation(models.Model):
     inviter = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="inviter")
-    guest = models.EmailField()
+    guest = models.EmailField(blank=True)
     date_invited = models.DateTimeField(default=timezone.now)
     accepted = models.BooleanField(default=False)
     slug = models.SlugField(max_length=200)

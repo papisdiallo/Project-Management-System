@@ -108,16 +108,16 @@ class LoginForm(forms.Form):
     )
 
     password = forms.CharField(
-        min_length=10,
+        min_length=8,
         widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Enter your password"}
+            attrs={"class": "form-control",
+                   "placeholder": "Enter your password"}
         ),
         label="Password",
     )
 
     def clean(self, *args, **kwargs):
         email = self.cleaned_data.get("email")
-        print("this is the email from the forms.py accounts", email)
         password = self.cleaned_data.get("password")
         if not email:
             raise forms.ValidationError("Please provide an email to login!")
@@ -130,6 +130,3 @@ class LoginForm(forms.Form):
                     "The given credentials aren't correct for a logging account! . Note that both fields may be case-sensitive. "
                 )
         return super(LoginForm, self).clean(*args, **kwargs)
-    
-        
-        
