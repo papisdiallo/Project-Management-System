@@ -2,6 +2,20 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import User, ConfirmationCode
 from django.contrib.auth import authenticate, login
+from .models import Invitation
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import (
+    Layout,
+    Submit,
+    Row,
+    Column,
+    Div,
+    HTML,
+    Field,
+    Hidden,
+    Button,
+    ButtonHolder,
+)
 
 
 class CostumUserCreationForm(UserCreationForm):
@@ -130,3 +144,34 @@ class LoginForm(forms.Form):
                     "The given credentials aren't correct for a logging account! . Note that both fields may be case-sensitive. "
                 )
         return super(LoginForm, self).clean(*args, **kwargs)
+
+
+class InviteForm(forms.ModelForm):
+    class Meta:
+        model = Invitation
+        fields = ('guest', 'role',)
+
+    def __init__(self, *args, **kwargs):
+        super(InviteForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "InviteForm"
+        self.helper.form_class = "someForm"
+        self.fields["guest"].label = "Invitee Email"
+        self.fields["guest"].widget.attrs["placeholder"] = "Enter invitee email"
+        self.fields["role"].label = "Role"
+
+
+class inviteHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(inviteHelper, self).__init__(*args, **kwargs)
+        self.form_id = "InviteForm"
+        self.layout = Layout(
+            Row(
+                Column("guest", css_class="form-group col-lg-8 col-md-6 mb-0"),
+                Column(
+                    "role", css_class="form-group col-lg-4 col-md-6 mb-0"
+                ),
+                css_class="form-row",
+            ),
+        )
+        # self.template = 'bootstrap4/table_inline_formset.html'

@@ -65,3 +65,7 @@ def send_emailConfirmation_code(email_to, username, code):
     # this is what allows you to send the email as html and not a plain text(this is super important)
     email.content_subtype = 'html'
     EmailThreading(email).start()
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'

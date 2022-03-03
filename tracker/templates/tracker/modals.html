@@ -6,20 +6,69 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Invite new members</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                 </div>            
                 <div class="modal-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <fieldset>
-                            {{ invitationFormset|crispy }}
-                        </fieldset>
-                        <button type="submit" class="btn btn-primary btn-block">Invite</button>
-                    </form>
+                    {% crispy invitationFormset helper %}
+                    <button type="submit" class="btn btn-primary btn-sm">Invite </button>
                 </div>      
             </div>
         </div>
       </div>
       <!-- End of the invitation modal-->
+
+       {% comment %} <div class="modal fade" id="createLabel" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Creating New Label</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+        </div> 
+          <div class="modal-body">          
+              {% crispy labelForm %}
+             
+          </div>
+        </div>
+    </div>
+  </div>
+  <!-- end of the status creation modal -->
+  <div class="modal fade" id="createStatus" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Creating New Status</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div> 
+          <div class="modal-body">          
+              {% crispy statusForm %}
+              
+          </div>
+        </div>
+    </div>
+  </div>
+  <!-- end of the status creation modal -->
+
+  <div class="modal fade" id="createProject" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Creating New Project</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div> 
+          <div class="modal-body">
+            
+              {% crispy projectForm %}
+            
+          </div>
+        </div>
+    </div>
+  </div> {% endcomment %}
+  {% comment %} {% include 'tracker/project-details.html' %} {% endcomment %}

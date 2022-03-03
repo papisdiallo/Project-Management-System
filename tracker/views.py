@@ -19,7 +19,9 @@ def create_site(request):
             form.save(commit=False)
             form.instance.admin = request.user
             form.save()
-            print("this is the new slug", form.instance.slug)
+            # assign the user's site or company
+            request.user.profile.site = form.instance
+            request.user.profile.save()
             return redirect(
                 reverse("dashbaord", kwargs={"site_slug": form.instance.slug})
             )
@@ -43,4 +45,14 @@ class DashbaordView(LoginRequiredMixin, View):
         return render(request, 'tracker/dashboard.html', context)
 
     def post(self, request, site_slug, *args, **kwargs):
-        pass
+        formset = invitationFormset(request.POST)
+        return render(request, 'tracker/dashboard.html', context)
+
+
+def inviteMembers(request):
+    formset = invitationFormset(request.POST or None)
+    if formset.is_valid():
+        print("the formset is valid")
+        for index, form in enumerate(formset):
+            email = form.cleaned_data(f"form-{index}-guest")
+            print(email)

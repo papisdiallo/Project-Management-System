@@ -1,105 +1,66 @@
+{% load static %}
 <!DOCTYPE html>
-{% load crispy_forms_tags %}
-<html>
-    {% include 'tracker/partials/head.html' %}
-    <body>
-    <div class="myForms">
-        <div>
-            <h3 class="text-center mb-3"><strong>Saga</strong>Software</h3>
-        </div>
-        <div class="col-md-6 card">
-            <form method="POST">
-                {% csrf_token %}
-                <p class="lead text-center mt-2">Join Today</p>
-                <div class="form-group">
-                    <label for="id_username">{{form.username.label}}</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fa fa-user icon"></i>
-                            </span>
-                        </div>
-                        {{form.username}}
-                    </div>
-                    <span class="mt-1" style="color: red;"> {{form.username.errors}}</span>
+<html lang="en">
+{% include 'tracker/partials/head.html' %}
 
-                </div>
+<body>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+        <div class="row flex-grow">
+          <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="auth-form-transparent text-left p-3">
+              <div class="brand-logo">
+                <img src="{% static 'tracker/images/logo.svg' %}" alt="logo">
+              </div>
+              <h4>New here?</h4>
+              <h6 class="font-weight-light">Join us today! It takes only few steps</h6>
+              <form method="POST">
+                {% csrf_token %}
 
                 <div class="form-group">
                     <label for="id_email">{{form.email.label}}</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fa fa-envelope icon"></i>
-                            </span>
-                        </div>
-                        {{form.email}}
-                    </div>
-                    <span class="mt-1" style="color: red;"> {{form.email.errors}}</span>
+                    {{form.email}}
+                    <span class="mt-1"> {{form.email.errors}}</span>
                 </div>
-                <div class="row">
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="id_email">{{form.first_name.label}}</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        
-                                        <i class="fa fa-list icon"></i>
-                                    </span>
-                                </div>
-                                {{form.first_name}}
-                            </div>
-                            <span class="mt-1" style="color: red;"> {{form.first_name.errors}}</span>
-                        </div>
-                    </div>
-                <!--The second div of the row  --> 
-                    <div class="col-6">
-                        <div class="form-group">
-                            <label for="id_email">{{form.last_name.label}}</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="fa fa-list icon"></i>
-                                    </span>
-                                </div>
-                                {{form.last_name}}
-                            </div>
-                            <span class="mt-1" style="color: red;"> {{form.last_name.errors}}</span>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="id_username">{{form.full_name.label}}</label>                    
+                    {{form.full_name}}                    
+                    <span class="mt-1"> {{form.full_name.errors}}</span>
                 </div>
 
                 <div class="form-group">
                     <label for="id_password1">{{form.password1.label}}</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fa fa-key icon"></i>
-                            </span>
-                        </div>
-                        {{form.password1}}
-                    </div> 
+                    {{form.password1}}
+                    <span class="mt-1"> {{form.password1.errors}}</span>
+ 
                 </div>
 
                 <div class="form-group">
                     <label for="id_password2">{{form.password2.label}}</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fa fa-lock icon"></i>
-                            </span>
-                        </div>
-                        {{form.password2}}
-                    </div> 
-                    <span class="mt-1" style="color: red;"> {{form.password2.errors}}</span>
+                    {{form.password2}}                   
+                    <span class="mt-1"> {{form.password2.errors}}</span>
                 </div>
 
-                <button type="submit" class="btn btn-success btn-block">Register Now</button>
+                <button type="submit" class="btn btn-primary btn-block">Register Now</button>
 
-            </form>
-        </div>       
-    </div>       
-        {% include 'tracker/partials/scripts.html' %}
-    </body>
+              </form>
+              <div class="text-center mt-3 font-weight-light">
+                  Already have an account? <a href="{% url 'Userlogin' %}" class="text-primary">Login</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 register-half-bg d-flex flex-row">
+            <p class="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2020  All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+    {% include 'tracker/partials/scripts.html' %}
+</body>
+
 </html>
