@@ -11,8 +11,8 @@
                     </button>
                 </div>            
                 <div class="modal-body">
-                    {% crispy invitationFormset helper %}
-                    <button type="submit" class="btn btn-primary btn-sm">Invite </button>
+                    {% crispy formset helper %}
+                    <button type="submit" id="invite_new_members" form="InviteForm" class="btn btn-primary float-right">Invite </button>
                 </div>      
             </div>
         </div>

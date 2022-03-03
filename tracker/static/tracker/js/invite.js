@@ -1,10 +1,23 @@
 $(document).ready(function () {
     var inviteBtn = document.querySelector("#invite_new_members")
-    console.log("this isthe invite btn ", inviteBtn)
+    form = document.querySelector("#InviteForm")
     if (inviteBtn !== null) {
         inviteBtn.addEventListener("click", (e) => {
             e.preventDefault();
-            console.log("the btn has been clicked for sure");
+            var url = "/trackers/invite_members/"
+            data = new FormData(form)
+            console.log("this isthe data from the form", data)
+            fetch(url, {
+                method: 'POST',
+                body: data,
+            })
+                .then(response => response.json())
+                .then(datas => {
+                    console.log('Success:', datas);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
         })
     }
 })

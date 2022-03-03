@@ -3,9 +3,11 @@ from accounts.forms import InviteForm, inviteHelper
 from accounts.models import Invitation
 
 
-def get_universalForms(request):
+def get_universalForms(request, *args, **kwargs):
     helper = inviteHelper()
-    invitaionFormSet = modelformset_factory(
+    formset = modelformset_factory(
         Invitation, fields=('guest', 'role',), form=InviteForm, extra=3)
-    formsDict = {"invitationFormset": invitaionFormSet, 'helper': helper, }
+
+    formsDict = {"formset": formset, 'helper': helper, }
+
     return formsDict

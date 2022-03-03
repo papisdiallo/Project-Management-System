@@ -58,7 +58,7 @@ def register(request):
     if request.user.is_authenticated:
         pass
     form = UserRegistrationForm(request.POST or None)
-    invitation_slug = request.GET.get("invitation", None)
+    invitation_slug = request.GET.get("invitation_refid", None)
     if form.is_valid():
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password1")
@@ -111,7 +111,6 @@ def email_confirmation(request):
             user_id = request.session['user_to_verify_id']
             user = User.objects.get(pk=user_id)
             entered_code = request.POST.get("entered_Code")
-            print("This is thee entered code", entered_code)
             user_code = user.confirmation_code.code
             if user_code == entered_code:
                 user.confirmation_code.is_confirmed = True

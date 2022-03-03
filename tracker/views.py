@@ -1,12 +1,19 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from .models import Site
+from django.conf import settings
+from accounts.models import Invitation
+from accounts.forms import InviteForm, inviteHelper
 from django.urls import reverse
 from .forms import CreateSiteForm
 from django.forms import modelformset_factory
 from django.contrib import messages
+from accounts.utils import EmailThreading
+from django.template.loader import get_template
+from django.core.mail import send_mail, EmailMessage
 
 
 @login_required
@@ -50,9 +57,39 @@ class DashbaordView(LoginRequiredMixin, View):
 
 
 def inviteMembers(request):
-    formset = invitationFormset(request.POST or None)
+    queryset = Invitation.objects.none()
+    formset_factory = modelformset_factory(
+        Invitation, fields=('guest', 'role',), form=InviteForm, extra=3)
+    formset = formset_factory(request.POST or None, queryset=queryset)
+    domain = request.META['HTTP_HOST']
+    context_data = {'domain': domain}
     if formset.is_valid():
-        print("the formset is valid")
-        for index, form in enumerate(formset):
-            email = form.cleaned_data(f"form-{index}-guest")
-            print(email)
+        recipient_list = []
+        for form in formset:
+            email = form.cleaned_data.get("guest", None)
+            if email != None:
+                form.save(commit=False)
+                form.instance.inviter = request.user
+                form.save()
+                recipient_list.append(email)
+                url = f'{domain}/accounts/register/?invitation_refid={form.instance.slug}/'
+                print("this is the url", url)
+                context_data['url'] = url
+                context_data['role'] = form.instance.role
+                context_data['site'] = form.instance.inviter.profile.site.site_name
+                context_data['inviter'] = form.instance.inviter.username
+                context_data['project'] = "New Project"
+
+                # let's send the emails to the differents users
+                message_template = get_template(
+                    'accounts/emailMessageTemplate.html').render(context_data)
+                subject = f"Invitation from {form.instance.inviter.profile.site.site_name}"
+                from_email = settings.EMAIL_HOST_USER
+                email = EmailMessage(
+                    subject, message_template, from_email, [email, ]
+                )
+                # this is what allows you to send the email as html and not a plain text(this is super important)
+                email.content_subtype = 'html'
+                EmailThreading(email).start()
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False})

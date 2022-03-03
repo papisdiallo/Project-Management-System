@@ -38,7 +38,6 @@ def generate_unique_slug(instance, new_slug=None):
     if klass.objects.filter(slug=slug).exists():
         slug = generate_random_26_string()
         return generate_unique_slug(instance, new_slug=slug)
-    print("this is the slug from the utils ", slug)
     return slug
 
 
@@ -53,9 +52,9 @@ class EmailThreading(threading.Thread):
 
 def send_emailConfirmation_code(email_to, username, code):
     # this content need to be an html
-    context_data = {'code': code}
+    context_data = {'code': code, 'username': username}
     message_template = get_template(
-        'accounts/emailMessageTemplate.html').render(context_data)
+        'accounts/email_code_confirmation.html').render(context_data)
     content = f"Hi {username},\n Thank you for signing up on our site.\n Your verification code is: {code}"
     subject = "Email Verification"
     from_email = settings.EMAIL_HOST_USER

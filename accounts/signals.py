@@ -17,7 +17,7 @@ def create_profile(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Invitation)
-def create_unique_invitation_slug(sender, instance, create, **kwargs):
+def create_unique_invitation_slug(sender, instance, created, **kwargs):
     if created:
         new_slug = generate_unique_slug(instance)
         instance.slug = new_slug
