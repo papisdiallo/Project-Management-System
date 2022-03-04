@@ -15,15 +15,26 @@
       <div class="collapse" id="projects">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
           <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">project 2</a></li>
         </ul>
       </div>
     </li>
+    {% if not dashboard_page %}
     <li class="nav-item" id="activeProjectLi">
       <a class="nav-link" href="pages/forms/basic_elements.html">
-        <i class="mdi menu-icon {{activeProjectIcon}}"></i>
+        <i class="mdi menu-icon mdi-home"></i>
         <span class="menu-title active-project">
-          Software Engineering Space
+          Home
         </span>
       </a>
     </li>
@@ -51,21 +62,6 @@
       </a>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#teams" aria-expanded="false" aria-controls="auth">
-        <i class="mdi mdi-account-multiple-plus menu-icon project-child"></i>
-        <span class="menu-title">Teams</span>
-        <i class="menu-arrow"></i>
-      </a>
-      <div class="collapse" id="teams">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Team 1 </a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/samples/login-2.html"> Team 2 </a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Team 3 </a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/samples/register-2.html"> Team 4 </a></li>
-        </ul>
-      </div>
-    </li>
 
     <li class="nav-item">
       <a class="nav-link" href="documentation/documentation.html">
@@ -77,7 +73,7 @@
     <li class="nav-item borderBottom">
       <a class="nav-link" href="documentation/documentation.html">
         <i class="mdi mdi-account-multiple-plus menu-icon project-child"></i>
-        <span class="menu-title">People</span>
+        <span class="menu-title">Filters</span>
       </a>
     </li>
     <li class="nav-item">
@@ -86,5 +82,6 @@
         <span class="menu-title">Project Settings</span>
       </a>
     </li>
+    {% endif %}
   </ul>
 </nav>

@@ -4,6 +4,10 @@
 
     <h1>this is your empty dashboard for now.</h1>
     <button type="button" data-toggle="modal" data-target="#invitationsModal" class="btn btn-primary">Invite New members</button>
-
+    {% for project in projects %}
+    {{ project}}
+    {% empty %}
+        <h4> there is no projects for this user</h4>
+    {% endfor %}
 
 {% endblock content %}

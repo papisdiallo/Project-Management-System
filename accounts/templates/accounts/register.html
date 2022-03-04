@@ -19,6 +19,11 @@
                 {% csrf_token %}
 
                 <div class="form-group">
+                    <label for="id_username">{{form.username.label}}</label>
+                    {{form.username}}
+                    <span class="mt-1"> {{form.username.errors}}</span>
+                </div>
+                <div class="form-group">
                     <label for="id_email">{{form.email.label}}</label>
                     {{form.email}}
                     <span class="mt-1"> {{form.email.errors}}</span>

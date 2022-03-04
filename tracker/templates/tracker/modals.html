@@ -19,6 +19,25 @@
       </div>
       <!-- End of the invitation modal-->
 
+      <!-- start of the create project modal-->
+      <div class="modal fade" id="createProject" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Creating New Project</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div> 
+              <div class="modal-body">
+                
+                  {% crispy projectForm %}
+                
+              </div>
+            </div>
+        </div>
+      </div>
+      <!-- end of the create project modal -->
        {% comment %} <div class="modal fade" id="createLabel" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -54,21 +73,5 @@
   </div>
   <!-- end of the status creation modal -->
 
-  <div class="modal fade" id="createProject" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title">Creating New Project</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-          </div> 
-          <div class="modal-body">
-            
-              {% crispy projectForm %}
-            
-          </div>
-        </div>
-    </div>
-  </div> {% endcomment %}
+ {% endcomment %}
   {% comment %} {% include 'tracker/project-details.html' %} {% endcomment %}

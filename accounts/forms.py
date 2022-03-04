@@ -23,8 +23,8 @@ class CostumUserCreationForm(UserCreationForm):
         model = User
         fields = UserCreationForm.Meta.fields + (
             "email",
-            "first_name",
-            "last_name",
+            "full_name",
+
         )
 
     def clean_username(self):
@@ -47,25 +47,15 @@ class UserRegistrationForm(CostumUserCreationForm):
         max_length=100,
         label="Username*",
     )
-    first_name = forms.CharField(
+    full_name = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "First name",
+                "placeholder": "Enter your full name",
             }
         ),
         max_length=100,
-        label="First Name*",
-    )
-    last_name = forms.CharField(
-        widget=forms.TextInput(
-            attrs={
-                "class": "form-control",
-                "placeholder": "Last name",
-            }
-        ),
-        max_length=100,
-        label="Last Name*",
+        label="Full Name*",
     )
 
     email = forms.EmailField(
@@ -106,8 +96,7 @@ class UserRegistrationForm(CostumUserCreationForm):
         fields = [
             "username",
             "email",
-            "first_name",
-            "last_name",
+            "full_name",
             "password1",
             "password2",
         ]

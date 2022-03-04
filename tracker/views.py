@@ -48,7 +48,9 @@ class DashbaordView(LoginRequiredMixin, View):
     def get(self, request, site_slug, *args, **kwargs):
         user = request.user
         # need to get the site and check ifthe user is in the people of course
-        context = {}
+        user_projects = user.get_projects()
+        print(user_projects)
+        context = {'projects': user_projects}
         return render(request, 'tracker/dashboard.html', context)
 
     def post(self, request, site_slug, *args, **kwargs):
@@ -59,7 +61,7 @@ class DashbaordView(LoginRequiredMixin, View):
 def inviteMembers(request):
     queryset = Invitation.objects.none()
     formset_factory = modelformset_factory(
-        Invitation, fields=('guest', 'role',), form=InviteForm, extra=3)
+        Invitation, fields=('guest', 'role'), form=InviteForm, extra=3)
     formset = formset_factory(request.POST or None, queryset=queryset)
     domain = request.META['HTTP_HOST']
     context_data = {'domain': domain}
@@ -73,7 +75,6 @@ def inviteMembers(request):
                 form.save()
                 recipient_list.append(email)
                 url = f'{domain}/accounts/register/?invitation_refid={form.instance.slug}/'
-                print("this is the url", url)
                 context_data['url'] = url
                 context_data['role'] = form.instance.role
                 context_data['site'] = form.instance.inviter.profile.site.site_name

@@ -68,3 +68,15 @@ def send_emailConfirmation_code(email_to, username, code):
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+
+def get_first_and_last_name(string):
+    first_name, last_name = "", ""
+    _list = string.split(" ")
+    if len(_list) > 2:
+        first_name = _list[0]
+        last_name = " ".join(_list[1:])
+        return (first_name, last_name)
+    else:
+        first_name, last_name = (_list[0], _list[1])
+        return (first_name, last_name)

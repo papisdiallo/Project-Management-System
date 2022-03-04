@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from tracker.models import Site
 from .forms import UserRegistrationForm, LoginForm
 from .models import ConfirmationCode, Invitation
-from .utils import send_emailConfirmation_code, EmailThreading
+from .utils import send_emailConfirmation_code, EmailThreading, get_first_and_last_name
 from django.template.loader import get_template
 import string
 import random
@@ -63,11 +63,12 @@ def register(request):
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password1")
         username = form.cleaned_data.get("username")
-
+        full_name = form.cleaned_data.get('full_name')
         instance = form.save(commit=False)
-        instance.first_name = form.cleaned_data.get("first_name")
-        print("this is the first name", form.cleaned_data.get("first_name"))
-        instance.last_name = form.cleaned_data.get("last_name")
+        instance.full_name = full_name
+        first_name, last_name = get_first_and_last_name(full_name)
+        instance.first_name = first_name
+        instance.last_name = last_name
         instance.save()
 
         user = authenticate(username=email, password=password)
@@ -94,7 +95,6 @@ def register(request):
 
             ConfirmationCode.objects.create(
                 user=user, code=code)
-            print("there is not invitation for this user")
             request.session['user_to_verify_id'] = user.id
             send_emailConfirmation_code(email, username, code)
             messages.info(
