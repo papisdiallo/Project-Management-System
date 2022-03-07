@@ -388,11 +388,80 @@ th.ticket_summary {
     letter-spacing: .02rem;
 }
 .project-instance.d-flex.align-items-center.p-2 {
-    cursor: pointer;
     transition: all .4s ease;
+}
+.over_header {
+    position: fixed;
+    top: 60px;
+    right: 0px;
+    left: 258px;
+    background: #fff;
+    z-index: 99;
+    
+}
+.proj_set_body {
+    height: calc(100vh - 120px);
+    border-top: 1px solid #ededed;
+    background: white;
+    margin-top: 1px;
+    padding: 0;
+}
+.content-wrapper {
+    background: #f3f3f3;
+    padding: 2.1rem 0 2.1rem 30px !important;
+    width: 100%;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+}
+.set_head {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    letter-spacing: .03rem;
+    color: #000000ad;
+}
+.nav-tabs .nav-link {
+    background: #f3f3f3b5;
+    color: #000000;
+    border-radius: 0;
+    border: 1px solid #f3f3f3;
+    padding: 1rem 1.5rem 0.8rem 1.5rem !important;
+    color: inherit;
+    display: inline-block;
+    font-size: 0.93rem;
+    line-height: 1;
+    vertical-align: middle;
+    letter-spacing: .02rem;
+}
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: #000;
+    background-color: #ffffff;
+    border-color: #ebedf2 #ebedf2 #ffffff;
+    border-right: none !important;
+}
+.proj_settings_nav a.active {
+    border-right: none;
+}
+._comment, ._overview {
+    background: transparent !important;
+    border: none !important;
+}
+._comment .card-header, ._overview .card-header {
+    border: 1px solid #e7eaed;
+}
+.dash-set-proj-icon {
+    font-size: 18px;
+    opacity: .4;
+    transition: ease-in-out .3s all;
 }
 .project-instance.d-flex.align-items-center.p-2:hover {
     background: #dde4f5;
+}
+.project-instance.d-flex.align-items-center.p-2:hover .dash-set-proj-icon {
+    font-size: 20px;
+    opacity: 1;
 }
 .project-instance-key {
     font-size: 13px;
@@ -562,7 +631,7 @@ i.mdi-receipt {
     top: 0;
     background: white;
     z-index: 99;
-    left: -40%;
+    left: 10%;
     box-shadow: 1px 1px 5px 1px grey;
     width: 620px;
 }

@@ -19157,7 +19157,6 @@ code {
 
 .btn.btn-sm, .btn-group-sm > .btn {
   font-size: 0.875rem;
-  border-radius: 30px;
 }
 
 .btn.btn-lg, .btn-group-lg > .btn {
@@ -21148,6 +21147,7 @@ dl li {
 .sidebar {
   min-height: calc(100vh - 60px);
   background: #ffffff;
+  position: fixed;
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   padding: 0;
@@ -21163,7 +21163,12 @@ dl li {
   -ms-box-shadow: none;
   border-right: 1px solid #e3e3e3;
 }
-
+.main-panel {
+  margin-left: 257px;
+}
+.sidebar-icon-only .main-panel {
+  margin-left: 90px !important;
+}
 .sidebar .nav {
   overflow: hidden;
   flex-wrap: nowrap;
