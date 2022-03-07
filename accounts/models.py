@@ -81,7 +81,11 @@ class User(AbstractBaseUser):
         return Project.objects.all()
 
     def get_user_role(self):
-        pass
+        if self.is_site_administrator:
+            return "Admin"
+        elif self.is_project_manager:
+            return "Project Manager"
+        return "Developer"
 
 
 class Profile(models.Model):

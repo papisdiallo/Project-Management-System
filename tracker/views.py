@@ -129,12 +129,14 @@ class ProjectDetailView(LoginRequiredMixin, View):
         form = CreateProjectForm(instance=project)
         activeProjectBg = project.project_theme.split(' ')[0]
         navbarBg = project.project_theme.split(' ')[1]
+        members = project.members.all()
+        print(members)
         context = {
             'site_slug': site_slug, 'project': project,
             'form': form, 'project_icon': project.project_icon,
             'project_color': project.project_color,
             'activeProjectBg': activeProjectBg,
-            'activeNav': navbarBg, }
+            'activeNav': navbarBg, 'members': members, }
         return render(request, 'tracker/project_details.html', context)
 
 

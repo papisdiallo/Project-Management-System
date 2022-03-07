@@ -40,6 +40,7 @@ class Project(models.Model):
     project_site = models.ForeignKey(
         Site, related_name="projects", on_delete=models.CASCADE, blank=True, null=True
     )
+    members = models.ManyToManyField(User, related_name="projects")
     # I will need to add the theme field so that I will track what the theme of the project.
     Allow_Milestone = models.BooleanField(default=True)
     project_color = models.CharField(
