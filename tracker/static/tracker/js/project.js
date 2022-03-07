@@ -150,6 +150,30 @@ $(document).ready(function () {
         } else {
             $("#vert-tabs-right-tabContent #id_project_icon").attr("value", newClass) // for the hidden innput in the form
         }
+        $(".close-icon-selection").on("click", (e) => {
+            var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
+            var url = `/trackers/${site_slug}/projects/edit/${key}/`
+            var _form = document.querySelector("#vert-tabs-right-tabContent #createProjectForm")
+            var form_data = new FormData(_form)
+            fetch(url, { method: 'POST', body: form_data })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("this is the data", data)
+                    if (!data.response && data.not_valid) {
+                        $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
+                    } else {
+                        console.log(data.name)
+                        currVal = data.value
+                        setTimeout(() => {
+
+                            // ALERT THE USER ABOUT THE THEME CHANGE
+                            alertUser("project", "has been updated successfully!", "The icon of the")
+                        }, 1000);
+
+                    }
+
+                })
+        })
 
     };
 
@@ -236,9 +260,6 @@ $(document).ready(function () {
                             }, 500)
                         }, 1000);
                         /// change the url when the key ofthe prject is changed
-                        const domain = location.protocol + '//' + location.host;
-                        history.pushState(null, 'project detail key', `${domain}/trackers/${site_slug}/projects/${data.value}/`);
-                        (data.name == "key") ? $('.active_project_key').text(`${data.value}`) : $('.active_project').text(data.value);
                     }
 
                 })

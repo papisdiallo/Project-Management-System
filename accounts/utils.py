@@ -4,8 +4,10 @@ import string
 from .models import Invitation
 from django.conf import settings
 from django.core.mail import send_mail, EmailMessage
-from tracker.models import Site
+from tracker.models import Site, Project
 from django.template.loader import get_template
+from django.urls import reverse
+from django.shortcuts import redirect, get_object_or_404
 
 
 colorPickerList = {
@@ -80,3 +82,42 @@ def get_first_and_last_name(string):
     else:
         first_name, last_name = (_list[0], _list[1])
         return (first_name, last_name)
+
+
+# this function is a decorator to check if the user is admin or project manager
+# before letting him perform certain actions
+def is_allowed_to_edit():
+    pass
+
+
+def allowedToEnterProject(func_view):
+    def wrapper_func(request, site_slug, project_key, *args, **kwargs):
+        user = request.user
+        site_slug = user.project.site.site_slug
+        project = get_object_or_404(Project, key=project_key)
+        if project not in user.get_projects():
+            messages.error(
+                request, "Sorry! but you are not allowed to get into this project.")
+            return redirect(
+                reverse("dashbaord", kwargs={"site_slug": site_slug})
+            )
+        else:
+            return func_view(request, site_slug, project_key, *args, **kwargs)
+    return wrapper_func
+
+
+def allowedToEditProject(func_view):
+    def wrapper_func(request, site_slug, project_key, *args, **kwargs):
+        user = request.user
+        site_slug = user.project.site.site_slug
+        project = get_object_or_404(Project, key=project_key)
+        if project.manager != user and not user.is_site_administrator:
+            messages.error(
+                request, "Sorry! but you are not allowed to make changes  in this project.")
+            return redirect(
+                reverse("edit_project_details", kwargs={
+                        "site_slug": site_slug, 'project_key': project.key})
+            )
+        else:
+            return func_view(request, site_slug, project_key, *args, **kwargs)
+    return wrapper_func

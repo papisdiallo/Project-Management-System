@@ -11,7 +11,7 @@ from django.urls import reverse
 from .forms import CreateSiteForm, CreateProjectForm
 from django.forms import modelformset_factory
 from django.contrib import messages
-from accounts.utils import EmailThreading
+from accounts.utils import EmailThreading, allowedToEnterProject, allowedToEditProject
 from django.template.loader import get_template
 from django.core.mail import send_mail, EmailMessage
 from django.template.context_processors import csrf
@@ -121,6 +121,7 @@ def createProject(request, site_slug):
 
 
 class ProjectDetailView(LoginRequiredMixin, View):
+
     def get(self, request, site_slug, project_key, *args, **kwargs):
         user = request.user
         site_slug = user.profile.site.slug
@@ -138,6 +139,8 @@ class ProjectDetailView(LoginRequiredMixin, View):
 
 
 @ login_required
+@allowedToEnterProject
+@allowedToEditProject
 def edit_project_name_and_key(request, site_slug, project_key):
     project = get_object_or_404(Project, key=project_key)
     result = {}
