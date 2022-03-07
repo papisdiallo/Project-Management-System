@@ -130,7 +130,6 @@ class ProjectDetailView(LoginRequiredMixin, View):
         activeProjectBg = project.project_theme.split(' ')[0]
         navbarBg = project.project_theme.split(' ')[1]
         members = project.members.all()
-        print(members)
         context = {
             'site_slug': site_slug, 'project': project,
             'form': form, 'project_icon': project.project_icon,
@@ -140,7 +139,7 @@ class ProjectDetailView(LoginRequiredMixin, View):
         return render(request, 'tracker/project_details.html', context)
 
 
-@ login_required
+@login_required
 @allowedToEnterProject
 @allowedToEditProject
 def edit_project_name_and_key(request, site_slug, project_key):
@@ -150,9 +149,7 @@ def edit_project_name_and_key(request, site_slug, project_key):
         form = CreateProjectForm(
             request.POST, request=request, instance=project)
         if form.is_valid():
-            print("the form is valid ")
             if form.has_changed():
-                print("the form has changed somewhere")
                 result["result"] = True
                 field_name = form.changed_data[0]
                 print(field_name)
@@ -160,7 +157,6 @@ def edit_project_name_and_key(request, site_slug, project_key):
                 field_value = field_obj.value_from_object(project)
                 result["name"] = field_name
                 result["value"] = field_value
-                print(field_value)
                 form.save()
                 result['not_valid'] = False
             return JsonResponse(result)

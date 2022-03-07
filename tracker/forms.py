@@ -121,6 +121,7 @@ class CreateProjectForm(forms.ModelForm):
                                 <span class="position-relative ml-2 change-theme-btn">Change theme</span>
                             </div>
                             <div class="d-flex align-items-center">
+                                <span class="text-muted">Please click the close icon to save changes</span>
                                 <span id="project-edit-current-icon" style="color: {{project_color}}"><i class="mdi mdi-48px {{project_icon}}"></i></span>
                                 <span class="change-icon-btn ml-2">Change icon</span>
                                 <div class="position-relative edit-project-icon-container-parent">

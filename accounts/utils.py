@@ -8,7 +8,7 @@ from tracker.models import Site, Project
 from django.template.loader import get_template
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
-
+from django.contrib import messages
 
 colorPickerList = {
     "#2596be",
@@ -86,14 +86,11 @@ def get_first_and_last_name(string):
 
 # this function is a decorator to check if the user is admin or project manager
 # before letting him perform certain actions
-def is_allowed_to_edit():
-    pass
-
 
 def allowedToEnterProject(func_view):
     def wrapper_func(request, site_slug, project_key, *args, **kwargs):
         user = request.user
-        site_slug = user.project.site.site_slug
+        site_slug = user.profile.site.slug
         project = get_object_or_404(Project, key=project_key)
         if project not in user.get_projects():
             messages.error(
@@ -109,7 +106,7 @@ def allowedToEnterProject(func_view):
 def allowedToEditProject(func_view):
     def wrapper_func(request, site_slug, project_key, *args, **kwargs):
         user = request.user
-        site_slug = user.project.site.site_slug
+        site_slug = user.profile.site.slug
         project = get_object_or_404(Project, key=project_key)
         if project.manager != user and not user.is_site_administrator:
             messages.error(

@@ -1,10 +1,21 @@
 $(document).ready(function () {
     $("#id_key").attr('oninput', "let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);")
     var site_slug = (window.location.pathname).split("/")[2]
-    console.log(site_slug)
     var url_end = (window.location.pathname).split("/").at(-2)
     // /////////////  EventListeners  //////////////
-
+    //.sidebar .nav .nav-item .nav-link
+    if (!($("#sidebar").attr('style')).includes("fff")) {
+        $(".sidebar .nav .nav-item .nav-link").css({
+            'color': '#fff !important'
+        })
+        $(".navbar-nav .nav-link.count-indicator").css({
+            'color': '#3c3636e0'
+        })
+    }
+    $('#vert-tabs-right-tabContent input[type="radio"]').on('click', function () {
+        console.log("the check project type has been changed");
+        editRadionBtn();
+    });
 
     document.querySelector("#createProject .modal-content .modal-body").addEventListener("click", (e) => {
         var $el = e.target
@@ -26,7 +37,64 @@ $(document).ready(function () {
             $("#submit-id-new-project").prop("disabled", false); // this will remove the disabled attribute
         }
     });
+    $(".select-this-theme").on("click", (e) => {
+        e.preventDefault();
+        $(".select-this-theme").attr("disabled", true)
+        $(".select-this-theme").text("Updating....")
+        var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
+        var url = `/trackers/${site_slug}/projects/edit/${key}/`
+        var _form = document.querySelector("#vert-tabs-right-tabContent #createProjectForm")
+        var form_data = new FormData(_form)
+        fetch(url, { method: 'POST', body: form_data })
+            .then(response => response.json())
+            .then(data => {
+                console.log("this is the data", data)
+                if (!data.response && data.not_valid) {
+                    $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
+                } else {
+                    console.log(data.name)
+                    currVal = data.value
+                    setTimeout(() => {
+                        // CLOSE THE THEME CONTAINER
+                        $(".close-change-theme-btn").click();
+                        // ALERT THE USER ABOUT THE THEME CHANGE
+                        alertUser("project", "has been updated successfully!", "Theme of")
+                        setTimeout(() => {
+                            $(".select-this-theme").text("Select this Theme")
+                            $('.select-this-theme').prop("disabled", false);
+                        }, 500)
+                    }, 1000);
+                    /// change the url when the key ofthe prject is changed
+                }
 
+            })
+
+    });
+
+    $(".close-icon-selection").on("click", (e) => {
+        var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
+        var url = `/trackers/${site_slug}/projects/edit/${key}/`
+        var _form = document.querySelector("#vert-tabs-right-tabContent #createProjectForm")
+        var form_data = new FormData(_form)
+        fetch(url, { method: 'POST', body: form_data })
+            .then(response => response.json())
+            .then(data => {
+                console.log("this is the data", data)
+                if (!data.response && data.not_valid) {
+                    $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
+                } else {
+                    console.log(data.name)
+                    currVal = data.value
+                    setTimeout(() => {
+
+                        // ALERT THE USER ABOUT THE THEME CHANGE
+                        alertUser("project", "has been updated successfully!", "The icon of the")
+                    }, 1000);
+
+                }
+
+            })
+    })
     // this event listener is for the projct edit section
     var project_edit = document.querySelector("#vert-tabs-right-tabContent");
     // document.querySelector(".edit_project").addEventListener("click", (e) => {
@@ -150,30 +218,6 @@ $(document).ready(function () {
         } else {
             $("#vert-tabs-right-tabContent #id_project_icon").attr("value", newClass) // for the hidden innput in the form
         }
-        $(".close-icon-selection").on("click", (e) => {
-            var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
-            var url = `/trackers/${site_slug}/projects/edit/${key}/`
-            var _form = document.querySelector("#vert-tabs-right-tabContent #createProjectForm")
-            var form_data = new FormData(_form)
-            fetch(url, { method: 'POST', body: form_data })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("this is the data", data)
-                    if (!data.response && data.not_valid) {
-                        $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
-                    } else {
-                        console.log(data.name)
-                        currVal = data.value
-                        setTimeout(() => {
-
-                            // ALERT THE USER ABOUT THE THEME CHANGE
-                            alertUser("project", "has been updated successfully!", "The icon of the")
-                        }, 1000);
-
-                    }
-
-                })
-        })
 
     };
 
@@ -188,7 +232,7 @@ $(document).ready(function () {
         }
         if ("dashboardIcon" in iconObj) {
             iconObj.previewIcon.attr("style", `color: ${newColor}`);
-            iconObj.dashboardIcon.attr("style", `background: ${newColor}`);
+            iconObj.dashboardIcon.attr("style", `color: ${newColor}`);
 
         } else {
             projectColorInput.setAttribute("value", `${newColor}`) // for the hidden input 
@@ -232,39 +276,7 @@ $(document).ready(function () {
             $(element).attr("color", "#fff")
             //projectThemeSelection();
         }
-        $(".select-this-theme").on("click", (e) => {
-            e.preventDefault();
-            $(".select-this-theme").attr("disabled", true)
-            $(".select-this-theme").text("Updating....")
-            var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
-            var url = `/trackers/${site_slug}/projects/edit/${key}/`
-            var _form = document.querySelector("#vert-tabs-right-tabContent #createProjectForm")
-            var form_data = new FormData(_form)
-            fetch(url, { method: 'POST', body: form_data })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("this is the data", data)
-                    if (!data.response && data.not_valid) {
-                        $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
-                    } else {
-                        console.log(data.name)
-                        currVal = data.value
-                        setTimeout(() => {
-                            // CLOSE THE THEME CONTAINER
-                            $(".close-change-theme-btn").click();
-                            // ALERT THE USER ABOUT THE THEME CHANGE
-                            alertUser("project", "has been updated successfully!", "Theme of")
-                            setTimeout(() => {
-                                $(".select-this-theme").text("Select this Theme")
-                                $('.select-this-theme').prop("disabled", false);
-                            }, 500)
-                        }, 1000);
-                        /// change the url when the key ofthe prject is changed
-                    }
 
-                })
-
-        })
     }
 
     function alertUser(key, message, type) {
@@ -273,8 +285,7 @@ $(document).ready(function () {
         alertify.success(`${type} <span class="alert-key">${key} </span>${message}`);
     };
     function showInputEditIcon(el) {
-        // need to update the kep everytime the ajax call has  been made
-        console.log(el)
+
         var _icon = el.closest(".align-items-center").lastElementChild.firstElementChild
         var name = $("#vert-tabs-right-tabContent #createProjectForm input[name='name']").val();
         var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
@@ -410,6 +421,30 @@ $(document).ready(function () {
         }
 
         return color(r, g, b);
+    }
+    var editRadionBtn = () => {
+        var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
+        var url = `/trackers/${site_slug}/projects/edit/${key}/`
+        var _form = document.querySelector("#vert-tabs-right-tabContent #createProjectForm")
+        var form_data = new FormData(_form)
+        fetch(url, { method: 'POST', body: form_data })
+            .then(response => response.json())
+            .then(data => {
+                console.log("this is the data", data)
+                if (!data.response && data.not_valid) {
+                    data.formErrors ? $("#nav-general #createProjectForm").replaceWith(data.formErrors) : ""
+
+                } else {
+                    var editPlace = $(".over_header .proj_type")
+                    editPlace.text(data.value)
+                    alertUser(`Type`, 'has been updated successfully!', `Project`)
+
+                }
+            })
+            .catch(error => {
+                alert('something went wrong please try again!')
+            })
+
     }
 
 })
