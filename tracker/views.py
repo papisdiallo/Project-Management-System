@@ -8,7 +8,7 @@ from django.conf import settings
 from accounts.models import Invitation
 from accounts.forms import InviteForm, inviteHelper
 from django.urls import reverse
-from .forms import CreateSiteForm, CreateProjectForm
+from .forms import CreateSiteForm, CreateProjectForm, MilestoneForm
 from django.forms import modelformset_factory
 from django.contrib import messages
 from accounts.utils import EmailThreading, allowedToEnterProject, allowedToEditProject
@@ -127,6 +127,7 @@ class ProjectDetailView(LoginRequiredMixin, View):
         site_slug = user.profile.site.slug
         project = get_object_or_404(Project, key=project_key)
         form = CreateProjectForm(instance=project)
+        milestone_form = MilestoneForm(request.POST or None)
         activeProjectBg = project.project_theme.split(' ')[0]
         navbarBg = project.project_theme.split(' ')[1]
         members = project.members.all()
@@ -135,7 +136,8 @@ class ProjectDetailView(LoginRequiredMixin, View):
             'form': form, 'project_icon': project.project_icon,
             'project_color': project.project_color,
             'activeProjectBg': activeProjectBg,
-            'activeNav': navbarBg, 'members': members, }
+            'activeNav': navbarBg, 'members': members,
+            'mile_form': milestone_form, }
         return render(request, 'tracker/project_details.html', context)
 
 
@@ -170,3 +172,25 @@ def edit_project_name_and_key(request, site_slug, project_key):
             return JsonResponse(result)
     # this view should only be called in a fetch or ajax request with post method
     return JsonResponse({'error': 'Something went wrong. PLease Try again'})
+
+
+def create_milestone(request, project_key, **kwargs):
+    project = get_object_or_404(Project, key=project_key)
+    form = MilestoneForm(request.POST or None)
+    result = {}
+    if form.is_valid():
+        instance = form.save(commit=False)
+        instance.project = project
+        instance.created_by = request.user
+        # instance.save()
+        template = render_to_string(
+            "tracker/new_milestone.html", {'milestone': instance, })
+        result['valid'] = True
+        result['template'] = template
+        print("the form is valid")
+        return JsonResponse(result)
+    result['valid'] = False
+    context = csrf(request)
+    formWithErrors = render_crispy_form(form, context=context)
+    result["formErrors"] = formWithErrors
+    return JsonResponse(result)

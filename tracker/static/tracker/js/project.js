@@ -70,7 +70,35 @@ $(document).ready(function () {
             })
 
     });
-
+    $("#vert-tabs-right-milestone").on("click", (e) => {
+        if ($(e.target).attr("id") !== "submit-id-save") return;
+        e.preventDefault();
+        _form = document.querySelector("#milestoneForm")
+        form_data = new FormData(_form);
+        var project_key = (window.location.pathname).split("/").at(-3)
+        url = `/trackers/${project_key}/create-milestone/`
+        fetch(url, { method: "POST", body: form_data })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    $("#vert-tabs-right-milestone #milestoneForm")[0].reset();
+                    if ($("#vert-tabs-right-milestone .empty").length) {
+                        $("#vert-tabs-right-milestone .empty").parent().html("");
+                    }
+                    $(".milestones_body").prepend(data.template)
+                } else {
+                    $("#vert-tabs-right-tabContent #milestoneForm").replaceWith(data.formErrors)
+                    $('#milestoneForm #id_end_date').datepicker();
+                    $('#milestoneForm #id_start_date').datepicker();
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                alert("Something went wrong please try again later", error)
+            })
+    })
+    $('#milestoneForm #id_end_date').datepicker();
+    $('#milestoneForm #id_start_date').datepicker();
     $(".close-icon-selection").on("click", (e) => {
         var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
         var url = `/trackers/${site_slug}/projects/edit/${key}/`
@@ -122,7 +150,9 @@ $(document).ready(function () {
     //     });
     // });
     $("#vert-tabs-right-tabContent input[type='text']").each((index, element) => {
-        showInputEditIcon(element);
+        if (($(element).attr('name') === 'key') | ($(element).attr('name') === 'name')) {
+            showInputEditIcon(element);
+        }
         $(element).attr("autocomplete", "off");
         $("#vert-tabs-right-tabContent #createProjectForm #id_key").attr('oninput', "let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);")
     });

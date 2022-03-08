@@ -390,6 +390,9 @@ th.ticket_summary {
 .project-instance.d-flex.align-items-center.p-2 {
     transition: all .4s ease;
 }
+.empty {
+    display: block;
+}
 .over_header {
     position: fixed;
     top: 60px;
@@ -969,3 +972,10 @@ li.d-flex.header span {
   }
 
   /* end loading icon css */
+.mil_close_icon{
+    position: absolute;
+    right: -6px;
+    top: -14px;
+    font-size: 21px;
+}
+

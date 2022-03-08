@@ -54,8 +54,10 @@
             <div class="ml-auto d-flex align-items-center">
                 <span class="mr-2">members</span>
                 <span class="badge badge-danger mr-3">20</span>
-                <button type="button" data-toggle="modal" data-target="#invitationsModal" class="btn btn-primary btn-sm mr-2">Invite New members</button>
-            </div>
+                {% if not request.user.is_developer %}
+                  <button type="button" data-toggle="modal" data-target="#invitationsModal" class="btn btn-primary btn-sm mr-2">Invite New members</button>
+                {% endif %}
+              </div>
         </div>
     </div>
     <div class="row" style="margin-top: 13px; padding: 0;">
@@ -81,16 +83,17 @@
                     <div class="col-12">
                       <div class="card">
                         <div class="card-header">          
-                          <div class="card-tools">
-                            <div class="input-group input-group-sm" style="width: 350px;">
-                              {% comment %} <input type="text" name="table_search" class="form-control float-right" placeholder="Search"> {% endcomment %}
-          
+                          <div class="card-tools d-flex align-items-center">
+                            <div class="input-group input-group-sm" style="width: 450px;">
+                              <input type="text" name="table_search" class="form-control float-right" placeholder="Search by email or last name">
                               <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                   <i class="fas fa-search"></i>
                                 </button>
                               </div>
+                              
                             </div>
+                            {% comment %} <input type="text" name="table_search_role" class="form-control float-right" placeholder="Search by email, role, or last name"> {% endcomment %}
                           </div>
                         </div>
                         <!-- /.card-header -->
@@ -135,64 +138,53 @@
                   </div>
             </div>
             <div class="tab-pane fade" id="vert-tabs-right-milestone" role="tabpanel" aria-labelledby="vert-tabs-right-milestone-tab">
+                <div class="d-flex align-items-center justify-content-between py-3">
+                  <h3 class="card-title m-0">Project Milestones</h3>
+                  <button type="button" data-toggle="modal" data-target="#invitationsModal" class="btn btn-success btn-sm mr-2">
+                    Add Milestone
+                  </button>
+                </div>
+                <div class="card my-4 p-3 " style="background: #f3f3f3;">
+                  <span class="mil_close_icon"><i class="mdi mdi-close-box"></i></span>
+                  {% crispy mile_form %}
+                </div>
                 <div class="row">
                     <div class="col-12">
                       <div class="card">
-                        <div class="card-header">
-                          <h3 class="card-title">Responsive Hover Table</h3>
-          
-                          <div class="card-tools">
-                            <div class="input-group input-group-sm" style="width: 150px;">
-                              {% comment %} <input type="text" name="table_search" class="form-control float-right" placeholder="Search"> {% endcomment %}
-          
-                              <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                  <i class="fas fa-search"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- /.card-header -->
                         <div class="card-body table-responsive p-0">
                           <table class="table table-hover text-nowrap">
                             <thead>
                               <tr>
-                                <th>ID</th>
-                                <th>User</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                                <th>Reason</th>
+                                <th>MILESTONE NAME</th>
+                                <th>START DATE</th>
+                                <th>END DATE</th>
+                                <th>CREATED BY</th>
+                                <th>DELETE</th>
                               </tr>
                             </thead>
-                            <tbody>
+
+                            <tbody class="milestones_body">
+                              {% for milestone in milestones %}
                               <tr>
-                                <td>183</td>
-                                <td>John Doe</td>
-                                <td>11-7-2014</td>
-                                <td><span class="tag tag-success">Approved</span></td>
-                                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                <td>{{milestone.name}}</td>
+                                <td>{{milestone.start_date|date:"M d, Y"}}</td>
+                                <td>{{milestone.end_date|date:"M d, Y"}}</td>
+                                <td><span class="tag tag-success">{{milestone.create_by}}</span></td>
+                                <td><span class="tag tag-success"><i class="mdi mdi-trash-can-outline"></i></span></td>
                               </tr>
-                              <tr>
-                                <td>219</td>
+                              {% empty %}   
+                                  <div>                            
+                                    <span class="d-flex flex-column align-items-center justify-content-center p-4 empty">
+                                      <h4 class="text-center mt-1">This project has no on going milestones</h4>
+                                    </span>
+                                  </div>                                 
+                              {% endfor %}
+                              <tr class="hidden-actions">
+                                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                <td>11-7-2014</td>
+                                <td>11-7-2014</td>
                                 <td>Alexander Pierce</td>
-                                <td>11-7-2014</td>
-                                <td><span class="tag tag-warning">Pending</span></td>
-                                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                              </tr>
-                              <tr>
-                                <td>657</td>
-                                <td>Bob Doe</td>
-                                <td>11-7-2014</td>
-                                <td><span class="tag tag-primary">Approved</span></td>
-                                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                              </tr>
-                              <tr>
-                                <td>175</td>
-                                <td>Mike Doe</td>
-                                <td>11-7-2014</td>
-                                <td><span class="tag tag-danger">Denied</span></td>
-                                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                                <td><span class="tag tag-success"><i class="mdi mdi-trash-can-outline"></i></span></td>
                               </tr>
                             </tbody>
                           </table>

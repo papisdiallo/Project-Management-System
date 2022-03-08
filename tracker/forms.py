@@ -1,5 +1,5 @@
 from django import forms
-from .models import Site, Project
+from .models import Site, Project, Milestone
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from django.forms.widgets import HiddenInput
@@ -121,11 +121,12 @@ class CreateProjectForm(forms.ModelForm):
                                 <span class="position-relative ml-2 change-theme-btn">Change theme</span>
                             </div>
                             <div class="d-flex align-items-center">
-                                <span class="text-muted">Please click the close icon to save changes</span>
+                                
                                 <span id="project-edit-current-icon" style="color: {{project_color}}"><i class="mdi mdi-48px {{project_icon}}"></i></span>
                                 <span class="change-icon-btn ml-2">Change icon</span>
                                 <div class="position-relative edit-project-icon-container-parent">
                                     <div class="position-absolute icon-container border d-flex align-items-center p-2"  style="z-index: 99;">
+                                        <span class="text-muted" style="font-size: 12px;">Please click the close icon to save changes</span>
                                         <div class="row p-2 mb-2">
                                             <span ><i class="icon-choice mdi mdi-office mdi-18px col-sm-2"></i></span>
                                             <span ><i class="icon-choice mdi mdi-folder mdi-18px col-sm-2"></i></span>
@@ -291,3 +292,28 @@ class CreateProjectForm(forms.ModelForm):
             raise forms.ValidationError(
                 "A project with name this already exists. Choose another one")
         return name
+
+
+class MilestoneForm(forms.ModelForm):
+    class Meta:
+        model = Milestone
+        fields = ("name_milestone", "start_date", "end_date", )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super(MilestoneForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'milestoneForm'
+        self.fields["name_milestone"].label = "Name"
+        self.fields["name_milestone"].widget.attrs["placeholder"] = "Enter the name of the milestone"
+        self.fields["start_date"].widget.attrs["placeholder"] = "Select a start date"
+        self.fields["end_date"].widget.attrs["placeholder"] = "Select an end date"
+        self.helper.layout = Layout(
+            Row(
+                Column('name_milestone', css_class="col-md-4"),
+                Column('start_date', css_class="col-md-2"),
+                Column('end_date', css_class="col-md-2"),
+                Column(Submit("Save", "Add", css_class="btn btn-primary btn-sm", style="margin-top:32px;"),
+                       css_class="col-md-2")
+            )
+        )
