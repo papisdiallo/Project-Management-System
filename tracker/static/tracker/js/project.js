@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    var _today = new Date();
+    var lastDate = new Date(_today.getFullYear(), _today.getMonth() + 1, 0);
     $("#id_key").attr('oninput', "let p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p, p);")
     var site_slug = (window.location.pathname).split("/")[2]
     var url_end = (window.location.pathname).split("/").at(-2)
@@ -70,9 +72,22 @@ $(document).ready(function () {
             })
 
     });
-    $("#vert-tabs-right-milestone").on("click", (e) => {
-        if ($(e.target).attr("id") !== "submit-id-save") return;
-        e.preventDefault();
+    $("#add_mil").on("click", e => {
+        $(".add_mil_section").fadeIn();
+        $(e.target).attr("disabled", true)
+    })
+    $("#edit_mil").on("click", e => {
+        $(".edit_mil_section").fadeIn();
+        $(e.target).attr("disabled", true)
+    })
+    var closeMilestone = (e) => {
+
+        $(e.target).parent().parent().fadeOut();
+        $("#add_mil").prop("disabled", false)
+        $("#edit_mil").prop("disabled", false)
+    };
+    function createNewMilestone(e) {
+        e.preventDefault()
         _form = document.querySelector("#milestoneForm")
         form_data = new FormData(_form);
         var project_key = (window.location.pathname).split("/").at(-3)
@@ -81,11 +96,14 @@ $(document).ready(function () {
             .then(response => response.json())
             .then(data => {
                 if (data.valid) {
-                    $("#vert-tabs-right-milestone #milestoneForm")[0].reset();
                     if ($("#vert-tabs-right-milestone .empty").length) {
                         $("#vert-tabs-right-milestone .empty").parent().html("");
                     }
-                    $(".milestones_body").prepend(data.template)
+                    $(".milestones_body").prepend(data.template);
+
+                    $("#vert-tabs-right-milestone #milestoneForm")[0].reset();
+                    $(".mil_close_icon").click();
+                    alertUser("Milestone", "created with sucess", "New")
                 } else {
                     $("#vert-tabs-right-tabContent #milestoneForm").replaceWith(data.formErrors)
                     $('#milestoneForm #id_end_date').datepicker();
@@ -96,9 +114,77 @@ $(document).ready(function () {
                 console.log(error)
                 alert("Something went wrong please try again later", error)
             })
+    }
+    function getEditMilestoneForm(e) {
+
+        $(".edit_mil_section").html(
+            `
+            <div class="text-center">
+                <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            `
+        )
+        $("#edit_mil").click();
+        var mil_id = $(e.target).parent().attr("data-mil-id-ed");
+        var url_mil = `/trackers/edit-milestone/${mil_id}/`
+        fetch(url_mil)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    $("#vert-tabs-right-milestone .edit_mil_section").html(data.template)
+                    $('#milestoneForm #id_end_date').datepicker({});
+                    $('#milestoneForm #id_start_date').datepicker({});
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                alert("Something when wrong PLease try later!")
+            })
+    }
+    function editMilestone(e) {
+        e.preventDefault();
+        $(e.target).attr("disabled", true)
+        var mil_id = $(".mil_close_icon").attr("data-close-mil")
+        var url_mil = `/trackers/edit-milestone/${mil_id}/`
+        _form = document.querySelector(".edit_mil_section #milestoneForm")
+        form_data = new FormData(_form)
+        fetch(url_mil, { method: 'POST', body: form_data, })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    var tr = $(`tr[data-reg="${mil_id}"`)
+                    alertUser('Milestone', "has been edited successfully", "Project")
+                    $(".mil_close_icon .mdi-close-box").click();
+                    tr.html(data.template)
+                    $(tr).css({ 'background': '#fff8a226' })
+                    $(e.target).prop('disabled', false)
+                    setTimeout(() => {
+                        $(tr).css({ 'background': 'transparent' });
+
+                    }, 2000)
+                } else {
+                    $("#vert-tabs-right-tabContent #milestoneForm").replaceWith(data.formErrors)
+                }
+            })
+    }
+    function deleteMilestone(e) {
+
+        var mil_id = $(e.target).parent().attr('data-mil-id-de')
+        console.log(mil_id)
+        $("#del_milestone").attr('data-mil-id-de', mil_id)
+    }
+    $("#vert-tabs-right-milestone").on("click", (e) => {
+        if ($(e.target).attr("id") === "submit-id-save") return createNewMilestone(e);
+        if (e.target.classList.contains("mdi-pencil")) return getEditMilestoneForm(e);
+        if (e.target.classList.contains("mdi-trash-can")) return deleteMilestone(e);
+        if (e.target.classList.contains("mdi-close-box")) return closeMilestone(e);
+        if ($(e.target).attr("id") === "submit-id-edit") return editMilestone(e);
+
     })
-    $('#milestoneForm #id_end_date').datepicker();
-    $('#milestoneForm #id_start_date').datepicker();
+    $('#milestoneForm #id_end_date').datepicker({});
+    $('#milestoneForm #id_start_date').datepicker({});
     $(".close-icon-selection").on("click", (e) => {
         var key = $("#vert-tabs-right-tabContent #createProjectForm input[name='key']").val();
         var url = `/trackers/${site_slug}/projects/edit/${key}/`
@@ -107,7 +193,6 @@ $(document).ready(function () {
         fetch(url, { method: 'POST', body: form_data })
             .then(response => response.json())
             .then(data => {
-                console.log("this is the data", data)
                 if (!data.response && data.not_valid) {
                     $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
                 } else {
@@ -123,32 +208,7 @@ $(document).ready(function () {
 
             })
     })
-    // this event listener is for the projct edit section
-    var project_edit = document.querySelector("#vert-tabs-right-tabContent");
-    // document.querySelector(".edit_project").addEventListener("click", (e) => {
 
-    //     // Please put all of this logic in a function
-    //     $(project_edit).show('slide', { direction: "right" }, 400);
-    //     var projectKeyParent = $(e.target).closest(".project-details").find(".project-instance-key");
-    //     projectKey = projectKeyParent.children(":first-child").text().trim();
-
-    //     $.ajax({
-    //         url: `/${workspace_slug}/getEditProject/${projectKey}/`,
-    //         type: "GET",
-    //         dataType: "json",
-    //         success: function (data) {
-    //             $("#vert-tabs-right-tabContent").html(data.template)
-    //             //allow milestone checkbox;
-    //             $("#vert-tabs-right-tabContent #nav-general #createProjectForm #div_id_Allow_Milestone label").parent().addClass("form-check")
-    //             $("#vert-tabs-right-tabContent #nav-general #createProjectForm #div_id_Allow_Milestone label").removeClass("custom-control-label").addClass("form-check-label").append($("#vert-tabs-right-tabContent #nav-general #createProjectForm #div_id_Allow_Milestone input"))
-    //             $("#vert-tabs-right-tabContent #nav-general #createProjectForm #div_id_Allow_Milestone input").removeClass("custom-control-input checkboxinput").addClass("form-check-input")
-
-    //         },
-    //         error: function (error) {
-    //             console.log("here is the error", error);
-    //         }
-    //     });
-    // });
     $("#vert-tabs-right-tabContent input[type='text']").each((index, element) => {
         if (($(element).attr('name') === 'key') | ($(element).attr('name') === 'name')) {
             showInputEditIcon(element);
@@ -269,12 +329,6 @@ $(document).ready(function () {
             var projectColorInput = document.getElementById("id_project_color")
         }
     }
-
-    function addAlpha(color, opacity = 0.1) {
-        // coerce values so ti is between 0 and 1.
-        const _opacity = Math.round(Math.min(Math.max(opacity || 1, 0), 1) * 255);
-        return color + _opacity.toString(16).toUpperCase();
-    }
     function changeProjectTheme(color, element) {
         var asidenav = document.getElementById("sidebar")
         if ($(element).parent().find(".mdi-check").length === 1) {
@@ -357,7 +411,6 @@ $(document).ready(function () {
             fetch(url, { method: 'POST', body: form_data })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("this is the data", data)
                     if (!data.response && data.not_valid) {
                         $("#vert-tabs-right-tabContent #createProjectForm").replaceWith(data.formErrors)
                         $(_icon).next().fadeOut()

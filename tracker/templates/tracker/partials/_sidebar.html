@@ -14,18 +14,11 @@
       </a>
       <div class="collapse" id="projects">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">project 1</a></li>
-          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/typography.html">project 2</a></li>
+          {% for project in request.user.projects.all %}
+          <li class="nav-item"> <a class="nav-link" href="pages/ui-features/buttons.html">{{project.name}}</a></li>
+          {% empty %}
+          <span>You are not part of a project</span>
+          {% endfor %}
         </ul>
       </div>
     </li>

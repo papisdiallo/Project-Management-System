@@ -3,6 +3,7 @@ from .models import Site, Project, Milestone
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 from django.forms.widgets import HiddenInput
+from django.conf import settings
 from crispy_forms.layout import (
     Layout,
     Submit,
@@ -48,6 +49,7 @@ class CreateProjectForm(forms.ModelForm):
         self.fields["project_color"].widget = HiddenInput()
         self.fields["project_icon"].widget = HiddenInput()
         self.fields["project_theme"].widget = HiddenInput()
+
         self.fields["key"].help_text = "A key is unique and allows to identify a project\n. It is highly recommended to choosse a concise one."
         instance = kwargs.get("instance", None)
         if instance:
@@ -308,12 +310,16 @@ class MilestoneForm(forms.ModelForm):
         self.fields["name_milestone"].widget.attrs["placeholder"] = "Enter the name of the milestone"
         self.fields["start_date"].widget.attrs["placeholder"] = "Select a start date"
         self.fields["end_date"].widget.attrs["placeholder"] = "Select an end date"
+        instance = kwargs.get("instance", None)
+        submitBtn = Submit("Edit", "Edit Now", css_class="btn btn-primary btn-sm", style="margin-top:32px;") if instance else Submit(
+            "Save", "Add", css_class="btn btn-primary btn-sm", style="margin-top:32px;")
+
         self.helper.layout = Layout(
             Row(
                 Column('name_milestone', css_class="col-md-4"),
                 Column('start_date', css_class="col-md-2"),
                 Column('end_date', css_class="col-md-2"),
-                Column(Submit("Save", "Add", css_class="btn btn-primary btn-sm", style="margin-top:32px;"),
+                Column(submitBtn,
                        css_class="col-md-2")
             )
         )

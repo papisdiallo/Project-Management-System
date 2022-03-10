@@ -67,8 +67,8 @@ class Milestone(models.Model):
     name_milestone = models.CharField(max_length=200)
     project = models.ForeignKey(
         Project, on_delete=models.CASCADE, related_name='milestones')
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField()
+    start_date = models.DateField()
+    end_date = models.DateField()
     created_by = models.ForeignKey(
         User, on_delete=models.SET_NULL, blank=True, null=True)
 

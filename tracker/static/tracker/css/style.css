@@ -21923,5 +21923,10 @@ dl li {
   background-color: darkgrey;
   outline: 1px solid slategrey;
 }
-
+.add_mil_section, .edit_mil_section {
+    display: none;
+}
+#edit_mil{
+  display:none;
+}
 /*# sourceMappingURL=maps/style.css.map */

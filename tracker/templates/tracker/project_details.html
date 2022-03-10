@@ -123,6 +123,7 @@
                                   <span class="d-flex align-items-center justify-content-around">
                                     <span><i class="mdi mdi-pencil" ></i></span>
                                     <span><i class="mdi mdi-trash-can"></i></span>
+                                  </span>
                                 </td>
                               </tr>
                               {% empty %}
@@ -140,11 +141,18 @@
             <div class="tab-pane fade" id="vert-tabs-right-milestone" role="tabpanel" aria-labelledby="vert-tabs-right-milestone-tab">
                 <div class="d-flex align-items-center justify-content-between py-3">
                   <h3 class="card-title m-0">Project Milestones</h3>
-                  <button type="button" data-toggle="modal" data-target="#invitationsModal" class="btn btn-success btn-sm mr-2">
+                  <button type="button" id="add_mil" class="btn btn-success btn-sm mr-2">
                     Add Milestone
                   </button>
+                  <button type="button" id="edit_mil" class="btn btn-success btn-sm mr-2">
+                    Edit Milestone
+                  </button>
                 </div>
-                <div class="card my-4 p-3 " style="background: #f3f3f3;">
+                <div class="card my-4 p-3 edit_mil_section" style="background: #f3f3f3;">
+                  <span class="mil_close_icon"><i class="mdi mdi-close-box"></i></span>
+                  
+                </div>
+                <div class="card my-4 p-3 add_mil_section" style="background: #f3f3f3;">
                   <span class="mil_close_icon"><i class="mdi mdi-close-box"></i></span>
                   {% crispy mile_form %}
                 </div>
@@ -155,22 +163,27 @@
                           <table class="table table-hover text-nowrap">
                             <thead>
                               <tr>
-                                <th>MILESTONE NAME</th>
+                              <th>MILESTONE NAME</th>
                                 <th>START DATE</th>
                                 <th>END DATE</th>
                                 <th>CREATED BY</th>
-                                <th>DELETE</th>
+                                <th>ACTIONS</th>
                               </tr>
                             </thead>
 
                             <tbody class="milestones_body">
                               {% for milestone in milestones %}
-                              <tr>
-                                <td>{{milestone.name}}</td>
+                              <tr data-reg={{milestone.id}}>
+                                <td>{{milestone.name_milestone}}</td>
                                 <td>{{milestone.start_date|date:"M d, Y"}}</td>
                                 <td>{{milestone.end_date|date:"M d, Y"}}</td>
-                                <td><span class="tag tag-success">{{milestone.create_by}}</span></td>
-                                <td><span class="tag tag-success"><i class="mdi mdi-trash-can-outline"></i></span></td>
+                                <td><span class="tag tag-success">{{milestone.created_by}}</span></td>
+                                <td>
+                                  <span class="d-flex align-items-center justify-content-around">
+                                    <span data-mil-id-ed="{{milestone.id}}"><i class="mdi mdi-pencil" ></i></span>
+                                    <span data-mil-id-de="{{milestone.id}}" data-toggle="modal" data-target="#del_milestone"><i class="mdi mdi-trash-can"></i></span>
+                                  </span>                                
+                                </td>
                               </tr>
                               {% empty %}   
                                   <div>                            
@@ -179,13 +192,7 @@
                                     </span>
                                   </div>                                 
                               {% endfor %}
-                              <tr class="hidden-actions">
-                                <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                                <td>11-7-2014</td>
-                                <td>11-7-2014</td>
-                                <td>Alexander Pierce</td>
-                                <td><span class="tag tag-success"><i class="mdi mdi-trash-can-outline"></i></span></td>
-                              </tr>
+                              
                             </tbody>
                           </table>
                         </div>
